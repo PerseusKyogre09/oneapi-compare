@@ -1,7 +1,5 @@
 # Parallel Image Processing using Intel oneAPI DPC++
 
-A small yet impactful project for the Intel Student Ambassador Program
-
 ## Project Overview
 
 This project applies basic image processing operations (grayscale conversion, edge detection, and blurring) using Intel oneAPI DPC++ to demonstrate performance benefits of parallel computing on CPU/GPU.
@@ -21,10 +19,15 @@ This project applies basic image processing operations (grayscale conversion, ed
 ## 🛠️ Tools & Technologies
 
 🔹 **oneAPI DPC++ (Data Parallel C++)**
+
 🔹 **OpenCV** (for image loading & display)
+
 🔹 **Intel VTune Profiler** (for performance analysis)
+
 🔹 **Intel Advisor** (for profiling & optimization suggestions)
+
 🔹 **C++ with SYCL/DPC++**
+
 
 ## Project Structure
 
