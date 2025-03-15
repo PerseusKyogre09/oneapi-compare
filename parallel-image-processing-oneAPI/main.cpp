@@ -18,7 +18,7 @@ void convertToGrayscaleDPCPP(const cv::Mat& input, cv::Mat& output) {
     // Ensure output has the right dimensions
     output = cv::Mat(height, width, CV_8UC1);
     
-    // Create buffers for input and output
+    // Create buffers for I/O
     std::vector<unsigned char> input_data(input.data, input.data + width * height * channels);
     std::vector<unsigned char> output_data(width * height);
     
@@ -47,7 +47,7 @@ void convertToGrayscaleDPCPP(const cv::Mat& input, cv::Mat& output) {
                 // Calculate position in input array (RGB)
                 int pos = (row * width + col) * channels;
                 
-                // Convert to grayscale using the formula: 0.299*R + 0.587*G + 0.114*B
+                // Formula: 0.299*R + 0.587*G + 0.114*B
                 out[i] = static_cast<unsigned char>(
                     0.299f * in[pos] +
                     0.587f * in[pos + 1] +
@@ -111,8 +111,8 @@ void applyEdgeDetectionDPCPP(const cv::Mat& input, cv::Mat& output) {
             auto out = output_buffer.get_access<sycl::access::mode::write>(h);
             
             h.parallel_for(sycl::range<2>(height - 2, width - 2), [=](sycl::id<2> idx) {
-                int row = idx[0] + 1;  // Add 1 to skip the border
-                int col = idx[1] + 1;  // Add 1 to skip the border
+                int row = idx[0] + 1;
+                int col = idx[1] + 1;
                 
                 int gx = 0;
                 int gy = 0;
@@ -154,10 +154,9 @@ void applyBlurDPCPP(const cv::Mat& input, cv::Mat& output) {
     int height = input.rows;
     int channels = input.channels();
     
-    // Ensure output has the right dimensions
     output = cv::Mat(height, width, input.type());
     
-    // Create buffers for input and output
+    // Create buffers for I/O
     std::vector<unsigned char> input_data(input.data, input.data + width * height * channels);
     std::vector<unsigned char> output_data(width * height * channels);
     
