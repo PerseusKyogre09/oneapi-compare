@@ -5,11 +5,8 @@ Welcome to the oneapi-compare project! This is the set of steps I followed to in
 
 ## Prerequisites
 Before you begin, ensure you have met the following requirements:
-- [ ] You have installed [Python](https://www.python.org/downloads/).
-- [ ] You have installed the required Python packages. You can install them using:
-    ```sh
-    pip install -r requirements.txt
-    ```
+- [ ] You have installed [mingw](https://sourceforge.net/projects/mingw/) and setup.
+
 
 ## Installation
 To setup, follow these steps:
