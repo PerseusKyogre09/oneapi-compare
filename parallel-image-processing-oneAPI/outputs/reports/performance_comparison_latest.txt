@@ -1,0 +1,43 @@
+=========================================================
+   Performance Comparison: Serial vs Parallel Processing  
+   Generated on: Sat Mar 15 18:43:12 IST 2025                                  
+   Image: images/test.jpg                                     
+=========================================================
+
+Filter: grayscale
+-----------------------------------------------------------
+Grayscale conversion (OpenCV): 4.5293 ms
+Output image saved to outputs/images/serial_grayscale.jpg
+Selected device: Intel(R) Core(TM) Ultra 5 125U
+Grayscale conversion (DPC++): 453.092 ms
+Output image saved to outputs/images/parallel_grayscale.jpg
+Could not calculate speedup (missing timing data)
+
+Filter: edge
+-----------------------------------------------------------
+Edge detection (OpenCV): 38.9839 ms
+Output image saved to outputs/images/serial_edge.jpg
+Edge detection (DPC++): 328.061 ms
+Output image saved to outputs/images/parallel_edge.jpg
+Could not calculate speedup (missing timing data)
+
+Filter: blur
+-----------------------------------------------------------
+Blur (OpenCV): 9.47567 ms
+Output image saved to outputs/images/serial_blur.jpg
+Blur (DPC++): 426.251 ms
+Output image saved to outputs/images/parallel_blur.jpg
+Could not calculate speedup (missing timing data)
+
+=========================================================
+                        SUMMARY                          
+=========================================================
+Device Information:
+Selected device: Intel(R) Core(TM) Ultra 5 125U
+
+Recommendations:
+- For more detailed performance analysis, run with Intel VTune Profiler:
+  vtune -collect hotspots -result-dir vtune_results ./parallel_image_processor images/test.jpg outputs/vtune_test.jpg grayscale
+
+- For optimization suggestions, run with Intel Advisor:
+  advisor -collect survey -project-dir advisor_results -- ./parallel_image_processor images/test.jpg outputs/advisor_test.jpg grayscale
