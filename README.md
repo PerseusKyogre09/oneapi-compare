@@ -78,6 +78,20 @@ Performance comparison between serial OpenCV implementation and parallel oneAPI 
 | Edge        | TBD         | TBD               | TBD     |
 | Blur        | TBD         | TBD               | TBD     |
 
+## Problems Encountered
+
+During the development and testing of this project, I encountered several challenges:
+
+1. **Performance Discrepancy**: The performance results show that the parallel implementation is actually slower than the serial implementation. This is contrary to what we would expect from a parallel implementation.
+
+2. **Hardware Limitations**: The main issue is that I'm currently testing on a system without a dedicated GPU. The oneAPI DPC++ implementation is specifically optimized for GPU acceleration, but it's running on CPU fallback mode.
+
+3. **CPU Fallback Inefficiency**: When running on CPU, the DPC++ runtime introduces overhead that makes it less efficient than the highly optimized OpenCV library, which is already well-optimized for CPU execution.
+
+4. **Misleading Benchmarks**: The current performance metrics are not representative of the true potential of the parallel implementation, as they don't showcase the GPU acceleration capabilities.
+
+To get accurate performance comparisons, this code should be tested on a system with Intel GPU support. The current results reflect the limitations of running GPU-optimized code on CPU hardware rather than actual algorithm efficiency.
+
 ## Future Improvements
 
 - Add more complex filters
