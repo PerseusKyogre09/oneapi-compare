@@ -7,6 +7,7 @@
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
+RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 # Create output directory if it doesn't exist
@@ -39,6 +40,19 @@ if [ ! -f "./serial_image_processor" ] || [ ! -f "./parallel_image_processor" ];
     if [ ! -f "./serial_image_processor" ] || [ ! -f "./parallel_image_processor" ]; then
         echo "Failed to build executables. Please check your build environment."
         exit 1
+    fi
+fi
+
+# Check for GPU availability
+HAS_GPU=false
+if [ -f "./parallel_image_processor" ]; then
+    device_info=$(./parallel_image_processor $IMAGE_PATH outputs/dummy.jpg grayscale 2>&1 | grep "Selected device")
+    if echo "$device_info" | grep -q "GPU"; then
+        HAS_GPU=true
+        echo -e "${GREEN}GPU detected: $(echo $device_info | cut -d':' -f2)${NC}"
+    else
+        echo -e "${YELLOW}Warning: No GPU detected. Running on CPU only.${NC}"
+        echo -e "${YELLOW}Performance of parallel code may be slower than serial code.${NC}"
     fi
 fi
 
@@ -75,11 +89,26 @@ run_comparison() {
     # Calculate speedup
     if [ ! -z "$serial_time" ] && [ ! -z "$parallel_time" ] && [ "$parallel_time" != "0" ]; then
         speedup=$(echo "scale=2; $serial_time / $parallel_time" | bc)
-        echo -e "${GREEN}Speedup: ${speedup}x${NC}"
-        echo "Speedup: ${speedup}x" >> $REPORT_FILE
+        if (( $(echo "$speedup < 1.0" | bc -l) )); then
+            slowdown=$(echo "scale=2; $parallel_time / $serial_time" | bc)
+            echo -e "${RED}Slowdown: ${slowdown}x (parallel is slower)${NC}"
+            echo "Slowdown: ${slowdown}x (parallel is slower)" >> $REPORT_FILE
+            if [ "$HAS_GPU" = false ]; then
+                echo -e "${YELLOW}Note: Parallel version is slower because no GPU was detected.${NC}"
+                echo "Note: Parallel version is slower because no GPU was detected." >> $REPORT_FILE
+                echo "      DPC++ code is optimized for GPU execution but running on CPU." >> $REPORT_FILE
+            fi
+        else
+            echo -e "${GREEN}Speedup: ${speedup}x${NC}"
+            echo "Speedup: ${speedup}x" >> $REPORT_FILE
+        fi
     else
         echo -e "${YELLOW}Could not calculate speedup${NC}"
         echo "Could not calculate speedup (missing timing data)" >> $REPORT_FILE
+        if [ "$HAS_GPU" = false ]; then
+            echo -e "${YELLOW}Note: No GPU detected. Performance comparison may be misleading.${NC}"
+            echo "Note: No GPU detected. Performance comparison may be misleading." >> $REPORT_FILE
+        fi
     fi
     
     echo "" >> $REPORT_FILE
@@ -107,11 +136,22 @@ echo "Device Information:" >> $REPORT_FILE
 if [ -f "./parallel_image_processor" ]; then
     device_info=$(./parallel_image_processor $IMAGE_PATH outputs/dummy.jpg grayscale 2>&1 | grep "Selected device")
     echo "$device_info" >> $REPORT_FILE
+    
+    if ! echo "$device_info" | grep -q "GPU"; then
+        echo "WARNING: No GPU detected. The parallel implementation is designed for GPU acceleration." >> $REPORT_FILE
+        echo "         OpenCV (serial) is faster in this case because it's optimized for CPU execution." >> $REPORT_FILE
+        echo "         For optimal parallel performance, run on a system with Intel GPU support." >> $REPORT_FILE
+    fi
 fi
 
 # Check for Intel VTune and add recommendations
 echo "" >> $REPORT_FILE
 echo "Recommendations:" >> $REPORT_FILE
+if [ "$HAS_GPU" = false ]; then
+    echo "- For better parallel performance, run on a system with Intel GPU support" >> $REPORT_FILE
+    echo "- Current CPU-only execution does not demonstrate the full potential of DPC++" >> $REPORT_FILE
+    echo "" >> $REPORT_FILE
+fi
 echo "- For more detailed performance analysis, run with Intel VTune Profiler:" >> $REPORT_FILE
 echo "  vtune -collect hotspots -result-dir vtune_results ./parallel_image_processor $IMAGE_PATH outputs/vtune_test.jpg grayscale" >> $REPORT_FILE
 echo "" >> $REPORT_FILE
