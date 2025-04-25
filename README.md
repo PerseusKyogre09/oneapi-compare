@@ -74,9 +74,9 @@ Performance comparison between serial OpenCV implementation and parallel oneAPI 
 
 | Filter Type | OpenCV (ms) | oneAPI DPC++ (ms) | Speedup |
 |-------------|-------------|-------------------|---------|
-| Grayscale   | TBD         | TBD               | TBD     |
-| Edge        | TBD         | TBD               | TBD     |
-| Blur        | TBD         | TBD               | TBD     |
+| Grayscale   | 18.4 ms         |  5.4 ms               | 3x     |
+| Edge        | 61.1 ms         | 9.73 ms               | 7x     |
+| Blur        | 47.3 ms         | 11.1 ms               | 4x     |
 
 ## Problems Encountered
 
