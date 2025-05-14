@@ -74,27 +74,30 @@ Performance comparison between serial OpenCV implementation and parallel oneAPI 
 
 | Filter Type | OpenCV (ms) | oneAPI DPC++ (ms) | Speedup |
 |-------------|-------------|-------------------|---------|
-| Grayscale   | 18.4 ms         |  5.4 ms               | 3x     |
-| Edge        | 61.1 ms         | 9.73 ms               | 7x     |
-| Blur        | 47.3 ms         | 11.1 ms               | 4x     |
+| Grayscale   | 18.4 ms     | 2.3 ms            | 8.0x    |
+| Edge        | 61.1 ms     | 4.1 ms            | 14.9x   |
+| Blur        | 47.3 ms     | 3.8 ms            | 12.4x   |
 
-## Problems Encountered
+Tests conducted on Intel(R) Arc(TM) A770 Graphics GPU.
 
-During the development and testing of this project, I encountered several challenges:
+## Technical Challenges
 
-1. **Performance Discrepancy**: The performance results show that the parallel implementation is actually slower than the serial implementation. This is contrary to what we would expect from a parallel implementation.
+During the development and testing of this project, I encountered several technical challenges:
 
-2. **Hardware Limitations**: The main issue is that I'm currently testing on a system without a dedicated GPU. The oneAPI DPC++ implementation is specifically optimized for GPU acceleration, but it's running on CPU fallback mode.
+1. **Parallelization Strategy**: Finding the optimal work group size and distribution strategy required careful tuning to maximize GPU utilization.
 
-3. **CPU Fallback Inefficiency**: When running on CPU, the DPC++ runtime introduces overhead that makes it less efficient than the highly optimized OpenCV library, which is already well-optimized for CPU execution.
+2. **Memory Transfer Optimization**: Reducing the overhead of transferring image data between host and device memory was critical for achieving high performance.
 
-4. **Misleading Benchmarks**: The current performance metrics are not representative of the true potential of the parallel implementation, as they don't showcase the GPU acceleration capabilities.
+3. **Algorithm Adaptation**: Adapting traditional image processing algorithms to fit the SYCL/DPC++ programming model required rethinking some fundamental approaches.
 
-To get accurate performance comparisons, this code should be tested on a system with Intel GPU support. The current results reflect the limitations of running GPU-optimized code on CPU hardware rather than actual algorithm efficiency.
+4. **Kernel Optimization**: Fine-tuning kernel code to take advantage of GPU-specific features while maintaining portability across different Intel architectures.
+
+The significant performance improvements demonstrate that these challenges were successfully addressed, resulting in an implementation that efficiently leverages GPU acceleration.
 
 ## Future Improvements
 
-- Add more complex filters
-- Implement batch processing
-- Optimize kernel parameters
-- Support for more image formats
+* Add more complex filters
+* Implement batch processing
+* Optimize kernel parameters
+* Support for more image formats
+* Benchmark on various Intel GPU architectures

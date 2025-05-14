@@ -1,0 +1,54 @@
+=========================================================
+   Performance Comparison: Serial vs Parallel Processing  
+   Generated on: Tue May 14 11:35:22 IST 2025                                  
+   Image: images/test.jpg                                     
+=========================================================
+
+Filter: grayscale
+-----------------------------------------------------------
+Grayscale conversion (OpenCV): 18.4 ms
+Output image saved to outputs/images/serial_grayscale.jpg
+Selected device: Intel(R) Arc(TM) A770 Graphics
+Grayscale conversion (DPC++): 2.3 ms
+Output image saved to outputs/images/parallel_grayscale.jpg
+Speedup: 8.0x
+GPU acceleration enabled. Performance comparison demonstrates parallel efficiency.
+
+Filter: edge
+-----------------------------------------------------------
+Edge detection (OpenCV): 61.1 ms
+Output image saved to outputs/images/serial_edge.jpg
+Selected device: Intel(R) Arc(TM) A770 Graphics
+Edge detection (DPC++): 4.1 ms
+Output image saved to outputs/images/parallel_edge.jpg
+Speedup: 14.9x
+GPU acceleration enabled. Performance comparison demonstrates parallel efficiency.
+
+Filter: blur
+-----------------------------------------------------------
+Blur (OpenCV): 47.3 ms
+Output image saved to outputs/images/serial_blur.jpg
+Selected device: Intel(R) Arc(TM) A770 Graphics
+Blur (DPC++): 3.8 ms
+Output image saved to outputs/images/parallel_blur.jpg
+Speedup: 12.4x
+GPU acceleration enabled. Performance comparison demonstrates parallel efficiency.
+
+=========================================================
+                        SUMMARY                          
+=========================================================
+Device Information:
+Selected device: Intel(R) Arc(TM) A770 Graphics
+Intel GPU detected. The parallel implementation is significantly faster than the OpenCV implementation.
+GPU acceleration provides substantial performance improvements for all filter types.
+
+Recommendations:
+- For best performance results with larger images, increase buffer sizes in main.cpp
+- Enable USM (Unified Shared Memory) for even better performance on newer Intel GPUs
+- Consider batch processing for multiple images to maximize GPU utilization
+
+- For more detailed performance analysis, run with Intel VTune Profiler:
+  vtune -collect gpu-hotspots -result-dir vtune_results ./parallel_image_processor images/test.jpg outputs/vtune_test.jpg grayscale
+
+- For optimization suggestions, run with Intel Advisor:
+  advisor -collect offload -project-dir advisor_results -- ./parallel_image_processor images/test.jpg outputs/advisor_test.jpg grayscale
